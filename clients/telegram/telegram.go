@@ -1,7 +1,7 @@
 package telegram
 
 import (
-	"TelegramBot/clients/libs/e"
+	"TelegramBot/libs/e"
 	"encoding/json"
 	"io"
 	"net/http"
