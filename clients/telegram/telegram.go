@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	APIMETHOD         = ""
+	APIMETHOD         = "getUpdates"
 	SENDMESSAGEMETHOD = "sendMessage"
 )
 
@@ -21,8 +21,8 @@ type Client struct {
 	client   http.Client
 }
 
-func New(host string, token string) Client {
-	return Client{
+func New(host string, token string) *Client {
+	return &Client{
 		host:     host,
 		basePath: newBasePath(token),
 		client:   http.Client{},
@@ -49,24 +49,24 @@ func (c *Client) Updates(offset int, limit int) (updates []Update, err error) {
 	query := url.Values{}
 	query.Add("offset", strconv.Itoa(offset))
 	query.Add("limit", strconv.Itoa(limit))
-
 	data, err := c.makeRequest(APIMETHOD, query)
 
 	if err != nil {
 		return nil, err
 	}
-
 	var res UpdatesResponse
 	if err := json.Unmarshal(data, &res); err != nil {
+
 		return nil, err
 	}
+
 	return res.Result, nil
 }
 
 func (c *Client) makeRequest(method string, query url.Values) (data []byte, err error) {
 	defer func() { err = e.WrapIfNil("can't handle the request", err) }()
 	u := url.URL{
-		Scheme: "http",
+		Scheme: "https",
 		Host:   c.host,
 		Path:   path.Join(c.basePath, method),
 	}
@@ -74,8 +74,10 @@ func (c *Client) makeRequest(method string, query url.Values) (data []byte, err 
 	if err != nil {
 		return nil, err
 	}
+
 	request.URL.RawQuery = query.Encode()
 	response, err := c.client.Do(request)
+
 	if err != nil {
 		return nil, err
 	}
@@ -85,5 +87,6 @@ func (c *Client) makeRequest(method string, query url.Values) (data []byte, err 
 	if err != nil {
 		return nil, err
 	}
+
 	return body, nil
 }
