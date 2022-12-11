@@ -15,7 +15,7 @@ const (
 	batchSize   = 100
 )
 
-// 5623430249:AAHwmZrj2m0AkD1Gsn0hh1rTEWG9hBIt5U8
+
 func main() {
 
 	eventsProcessor := tgProcessor.New(
